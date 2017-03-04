@@ -93,14 +93,55 @@ class WSClient(object):
 
     def _on_message(self, data):
         logger.info("fully information of the return message:")
-        for k, v in data.items():
-            logger.info("\t\t%s: %s" % (k, v))
+        # for k, v in data.items():
+        #     logger.info("\t\t%s: %s" % (k, v))
         raw_data = data['payload']
         msgType = data['msgType']
-        with open('record.txt', 'a', encoding='utf-8') as f:
-            f.write(json.dumps(raw_data) + '\n')
+        # with open('record.txt', 'a', encoding='utf-8') as f:
+        #     f.write(json.dumps(raw_data) + '\n')
         record = dict()
-        if msgType == 'marketDepthTopShort':
+        if msgType == 'marketDetail':
+            record.update(
+                {
+                    "totalVolume": raw_data["totalVolume"],
+                    "turnoverRate": raw_data["turnoverRate"],
+                    "level": raw_data["level"],
+                    "commissionRatio": raw_data["commissionRatio"],
+                    "innerDisc": raw_data["innerDisc"],
+                    "volumeRatio": raw_data["volumeRatio"],
+                    "turnVolume": raw_data["turnVolume"],
+                    "priceLast": raw_data["priceLast"],
+                    "symbolId": raw_data["symbolId"],
+                    "priceOpen": raw_data["priceOpen"],
+                    "updownRatio": raw_data["updownRatio"],
+                    "outerDisc": raw_data["outerDisc"],
+                    "priceHigh": raw_data["priceHigh"],
+                    "updownVolume": raw_data["updownVolume"],
+                    "amount": raw_data["amount"],
+                    "priceNew": raw_data["priceNew"],
+                    "priceLow": raw_data["priceLow"],
+                    "poor": raw_data["poor"],
+                    "totalAmount": raw_data["totalAmount"],
+                    "priceAverage": raw_data["priceAverage"],
+                    "trades": json.dumps(raw_data["trades"]),
+                    "asks": json.dumps(raw_data["asks"]),
+                    "bids": json.dumps(raw_data["bids"])
+                }
+            )
+        elif msgType == 'tradeDetail':
+            record.update(
+                {
+                    "tradeId": self._list_2_str(raw_data["tradeId"]),
+                    "topAsks": json.dumps(raw_data["topAsks"]),
+                    "amount": self._list_2_str(raw_data["amount"]),
+                    "time": self._list_2_str(raw_data["time"]),
+                    "price": self._list_2_str(raw_data["price"]),
+                    "topBids": json.dumps(raw_data["topBids"]),
+                    "symbolId": raw_data["symbolId"],
+                    "direction": self._list_2_str(raw_data["direction"]),
+                }
+            )
+        elif msgType == 'marketDepthTopShort':
             record.update({
                 'version': raw_data['version'], 'symbolId': raw_data['symbolId'],
                 'askPrice': self._list_2_str(raw_data['askPrice']),
@@ -108,6 +149,54 @@ class WSClient(object):
                 'bidPrice': self._list_2_str(raw_data['bidPrice']),
                 'bidAmount': self._list_2_str(raw_data['bidAmount'])
             })
+        elif msgType == 'marketDepthTopDiff':
+            record.update({
+                'version': raw_data['version'], 'symbolId': raw_data['symbolId'],
+                'versionOld': raw_data['versionOld'],
+                'askDelete': self._list_2_str(raw_data['askDelete']),
+                'bidDelete': self._list_2_str(raw_data['bidDelete']),
+                'bidInsert': json.dumps(raw_data["bidInsert"]),
+                'askInsert': json.dumps(raw_data["askInsert"]),
+                'askUpdate': json.dumps(raw_data["askUpdate"]),
+                'bidUpdate': json.dumps(raw_data["bidUpdate"])
+            })
+        elif msgType == 'marketOverview':
+            record.update({
+                'symbolId': raw_data['symbolId'],
+                'priceNew': raw_data['priceNew'],
+                'totalAmount': raw_data['totalAmount'],
+                'totalVolume': raw_data['totalVolume'],
+                'priceOpen': raw_data['priceOpen'],
+                'priceHigh': raw_data['priceHigh'],
+                'priceBid': raw_data['priceBid'],
+                'priceAsk': raw_data['priceAsk'],
+                'priceLow': raw_data['priceLow']
+            })
+        elif msgType == 'lastKLine':
+            record.update({
+                'symbolId': raw_data['symbolId'],
+                'time': int(raw_data['time']),
+                'isTemp': int(raw_data['isTemp']) if 'isTemp' in raw_data else None,
+                'priceOpen': int(raw_data['priceOpen']),
+                'priceLow': raw_data['priceLow'],
+                'volume': raw_data['volume'],
+                'priceLast': raw_data['priceLast'],
+                'priceHigh': raw_data['priceHigh'],
+                'amount': raw_data['amount'],
+                'period': raw_data['period'],
+                'count': int(raw_data['count']),
+            })
+        elif msgType == 'lastTimeLine':
+            record.update({
+                'symbolId': raw_data['symbolId'],
+                'time': int(raw_data['time']),
+                'isTemp': int(raw_data['isTemp']) if 'isTemp' in raw_data else None,
+                'amount': int(raw_data['amount']),
+                'priceLast': raw_data['priceLast'],
+                'volume': raw_data['volume'],
+                'count': raw_data['count'],
+            })
+
         DBUtils.save_record(tableName=msgType, record=record)
 
     def _on_request(self, data):
