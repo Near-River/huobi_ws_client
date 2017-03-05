@@ -1,4 +1,5 @@
 CREATE TABLE `marketDepthTopShort` (
+  `id`        INT(11)          NOT NULL AUTO_INCREMENT,
   `version`   VARCHAR(16)      NOT NULL,
   `symbolId`  VARCHAR(16)      NOT NULL,
   `askPrice`  VARCHAR(255)
@@ -9,11 +10,12 @@ CREATE TABLE `marketDepthTopShort` (
               COLLATE utf8_bin NOT NULL,
   `bidAmount` VARCHAR(255)
               COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`version`)
+  PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  COLLATE = utf8_bin;
+  COLLATE = utf8_bin
+  AUTO_INCREMENT = 1;
 
 
 CREATE TABLE `marketDetail` (
@@ -72,6 +74,7 @@ CREATE TABLE `tradeDetail` (
 
 
 CREATE TABLE `marketDepthTopDiff` (
+  `id`         INT(11)          NOT NULL AUTO_INCREMENT,
   `version`    VARCHAR(16)      NOT NULL,
   `versionOld` VARCHAR(16)      NOT NULL,
   `symbolId`   VARCHAR(16)      NOT NULL,
@@ -87,11 +90,12 @@ CREATE TABLE `marketDepthTopDiff` (
                COLLATE utf8_bin NOT NULL,
   `bidUpdate`  VARCHAR(255)
                COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`version`)
+  PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
-  COLLATE = utf8_bin;
+  COLLATE = utf8_bin
+  AUTO_INCREMENT = 1;
 
 
 CREATE TABLE `marketOverview` (

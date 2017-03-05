@@ -9,7 +9,7 @@ from socketIO_client import SocketIO
 from db_util import DBUtils
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 VALID_PERIOD = {
     "1min", "5min", "15min", "30min", "60min",
@@ -92,7 +92,7 @@ class WSClient(object):
         logger.info("disconnected")
 
     def _on_message(self, data):
-        logger.info("fully information of the return message:")
+        # logger.info("fully information of the return message:")
         # for k, v in data.items():
         #     logger.info("\t\t%s: %s" % (k, v))
         raw_data = data['payload']
